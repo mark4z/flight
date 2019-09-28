@@ -5,8 +5,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/toolbox"
 	_ "github.com/go-sql-driver/mysql"
-	_ "i/flight/routers"
-	"i/flight/service"
+	"i/service"
 	"time"
 )
 
