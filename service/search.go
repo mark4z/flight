@@ -9,6 +9,8 @@ import (
 )
 
 const url = "http://www.juneyaoair.com/PriceCache"
+const changzhi = "CIH"
+const nanjing = "NKG"
 
 type Forward struct {
 	Id    int64     `orm:"auto"`
@@ -33,7 +35,7 @@ type OW struct {
 	back    []Back
 }
 
-func Get() string {
+func Get(s, t string) (string, error) {
 	now := time.Now().Format("2006-01-02")
 	req := httplib.Get(url)
 	req.Param("flightType", "OW")
@@ -43,17 +45,15 @@ func Get() string {
 	req.Param("arrCode", "NKG")
 	req.Param("periodType", "Line")
 	req.Param("_", strconv.FormatInt(time.Now().UnixNano()/1e6, 10))
-	s, _ := req.String()
-	return s
+	return req.String()
 }
 
 func Search() OW {
-	str := Get()
-	var sth [2]interface{}
-	_ = json.Unmarshal([]byte(str), &sth)
+	str0, _ := Get(changzhi, nanjing)
+	var sth1 []interface{}
+	_ = json.Unmarshal([]byte(str0), &sth1)
 
-	arr0 := sth[0].(map[string]interface{})
-	arr1 := sth[1].(map[string]interface{})
+	arr0 := sth1[0].(map[string]interface{})
 	var forward []Forward
 	var back []Back
 
@@ -64,6 +64,18 @@ func Search() OW {
 		flight.Price = v
 		forward = append(forward, *flight)
 	}
+	//如果有返程
+	var arr1 map[string]interface{}
+
+	if len(sth1) > 1 {
+		arr1 = sth1[1].(map[string]interface{})
+	} else {
+		str2, _ := Get(nanjing, changzhi)
+		var sth2 []interface{}
+		_ = json.Unmarshal([]byte(str2), &sth2)
+		arr1 = sth2[0].(map[string]interface{})
+
+	}
 	for i := range arr1 {
 		v := arr0[i].(float64)
 		flight := new(Back)
@@ -71,6 +83,7 @@ func Search() OW {
 		flight.Price = v
 		back = append(back, *flight)
 	}
+
 	return OW{forward, back}
 }
 
@@ -92,4 +105,5 @@ func Perform() {
 	for e := range r.back {
 		_, _ = o.Insert(&r.back[e])
 	}
+
 }
