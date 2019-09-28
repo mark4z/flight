@@ -5,11 +5,13 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/toolbox"
 	_ "github.com/go-sql-driver/mysql"
+	_ "i/flight/routers"
+	"i/flight/service"
 	"time"
 )
 
 func main() {
-	task := toolbox.NewTask("task", "0 0 * * * *", func() error { Perform(); fmt.Println(time.Now()); return nil })
+	task := toolbox.NewTask("task", "0 0 * * * *", func() error { service.Perform(); fmt.Println(time.Now()); return nil })
 	err := task.Run()
 	if err != nil {
 		fmt.Println(err)
