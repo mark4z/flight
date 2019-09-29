@@ -42,6 +42,7 @@ func Get(s, t, n string) (string, error) {
 	req.Param("arrCode", "NKG")
 	req.Param("periodType", "Line")
 	req.Param("_", strconv.FormatInt(time.Now().UnixNano()/1e6, 10))
+
 	return req.String()
 }
 
@@ -109,10 +110,10 @@ func Perform() {
 	f := append(f0, f1...)
 	b := append(b0, b1...)
 
-	if err0 != nil {
+	if err0 == nil {
 		_, _ = o.InsertMulti(len(f), f)
 	}
-	if err1 != nil {
+	if err1 == nil {
 		_, _ = o.InsertMulti(len(b), b)
 	}
 	fmt.Println(err0, err1)
