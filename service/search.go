@@ -31,8 +31,8 @@ func init() {
 }
 
 type OW struct {
-	forward []Forward
-	back    []Back
+	Forward []Forward
+	Back    []Back
 }
 
 func Get(s, t string) (string, error) {
@@ -99,10 +99,16 @@ func timeFormat(r string) time.Time {
 func Perform() {
 	o := orm.NewOrm()
 	r := Search()
-	for e := range r.forward {
-		_, _ = o.Insert(&r.forward[e])
-	}
-	for e := range r.back {
-		_, _ = o.Insert(&r.back[e])
-	}
+	_, _ = o.InsertMulti(len(r.Forward), r.Forward)
+	_, _ = o.InsertMulti(len(r.Back), r.Back)
+}
+
+func GetAll() OW {
+	o := orm.NewOrm()
+	var f []Forward
+	_, _ = o.QueryTable("forward").All(&f)
+	var b []Back
+	_, _ = o.QueryTable("back").All(&b)
+	var ow = OW{f, b}
+	return ow
 }
