@@ -15,32 +15,28 @@ const nanjing = "NKG"
 type Forward struct {
 	Id    int64     `orm:"auto"`
 	Date  time.Time `orm:"type(datetime)"`
+	Now   time.Time `orm:"type(datetime)"`
 	Price float64
 }
 type Back struct {
 	Id    int64     `orm:"auto"`
 	Date  time.Time `orm:"type(datetime)"`
+	Now   time.Time `orm:"type(datetime)"`
 	Price float64
 }
 
 func init() {
 	_ = orm.RegisterDriver("mysql", orm.DRMySQL)
-	_ = orm.RegisterDataBase("default", "mysql", "root:123456@tcp(server.anymre.top:3306)/flight?charset=utf8&parseTime=true&charset=utf8&loc=Asia%2FShanghai")
+	_ = orm.RegisterDataBase("default", "mysql", "flight:123456@tcp(server.anymre.top:3306)/flight?charset=utf8&parseTime=true&charset=utf8&loc=Asia%2FShanghai")
 	orm.RegisterModel(new(Forward), new(Back))
 	_ = orm.RunSyncdb("default", false, true)
 }
 
-type OW struct {
-	forward []Forward
-	back    []Back
-}
-
-func Get(s, t string) (string, error) {
-	now := time.Now().Format("2006-01-02")
+func Get(s, t, n string) (string, error) {
 	req := httplib.Get(url)
 	req.Param("flightType", "OW")
-	req.Param("departureDate", now)
-	req.Param("returnDate", now)
+	req.Param("departureDate", n)
+	req.Param("returnDate", n)
 	req.Param("sendCode", "CIH")
 	req.Param("arrCode", "NKG")
 	req.Param("periodType", "Line")
@@ -48,6 +44,8 @@ func Get(s, t string) (string, error) {
 	return req.String()
 }
 
+func Search(n string) ([]Forward, []Back) {
+	str0, _ := Get(changzhi, nanjing, n)
 func Search() (OW, error) {
 	str0, err := Get(changzhi, nanjing)
 	if err != nil {
@@ -64,6 +62,7 @@ func Search() (OW, error) {
 		v := arr0[i].(float64)
 		flight := new(Forward)
 		flight.Date = timeFormat(i)
+		flight.Now = time.Now()
 		flight.Price = v
 		forward = append(forward, *flight)
 	}
@@ -73,7 +72,7 @@ func Search() (OW, error) {
 	if len(sth1) > 1 {
 		arr1 = sth1[1].(map[string]interface{})
 	} else {
-		str2, _ := Get(nanjing, changzhi)
+		str2, _ := Get(nanjing, changzhi, n)
 		var sth2 []interface{}
 		_ = json.Unmarshal([]byte(str2), &sth2)
 		arr1 = sth2[0].(map[string]interface{})
@@ -83,10 +82,12 @@ func Search() (OW, error) {
 		v := arr0[i].(float64)
 		flight := new(Back)
 		flight.Date = timeFormat(i)
+		flight.Now = time.Now()
 		flight.Price = v
 		back = append(back, *flight)
 	}
 
+	return forward, back
 	return OW{forward, back}, nil
 }
 
@@ -101,6 +102,26 @@ func timeFormat(r string) time.Time {
 
 func Perform() {
 	o := orm.NewOrm()
+	now0 := time.Now().AddDate(0, 0, 14)
+	now1 := now0.AddDate(0, 0, 44)
+
+	f0, b0 := Search(getTimeStr(now0))
+	f1, b1 := Search(getTimeStr(now1))
+
+	f := append(f0, f1...)
+	b := append(b0, b1...)
+
+	_, _ = o.InsertMulti(len(f), f)
+	_, _ = o.InsertMulti(len(b), b)
+}
+
+func getTimeStr(t time.Time) string {
+	return t.Format("2006-01-02")
+}
+
+type OW struct {
+	Forward []Forward
+	Back    []Back
 	r, err := Search()
 	if err != nil {
 		fmt.Println(err)
@@ -112,4 +133,14 @@ func Perform() {
 			_, _ = o.Insert(&r.back[e])
 		}
 	}
+}
+
+func GetAll() OW {
+	o := orm.NewOrm()
+	var f []Forward
+	_, _ = o.QueryTable("forward").All(&f)
+	var b []Back
+	_, _ = o.QueryTable("back").All(&b)
+	var ow = OW{f, b}
+	return ow
 }
