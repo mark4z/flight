@@ -25,7 +25,7 @@ type Back struct {
 
 func init() {
 	_ = orm.RegisterDriver("mysql", orm.DRMySQL)
-	_ = orm.RegisterDataBase("default", "mysql", "root:123456@tcp(server.anymre.top:3306)/flight?charset=utf8&parseTime=true&charset=utf8&loc=Asia%2FShanghai")
+	_ = orm.RegisterDataBase("default", "mysql", "flight:123456@tcp(server.anymre.top:3306)/flight?charset=utf8&parseTime=true&charset=utf8&loc=Asia%2FShanghai")
 	orm.RegisterModel(new(Forward), new(Back))
 	_ = orm.RunSyncdb("default", false, true)
 }
