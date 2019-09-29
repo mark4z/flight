@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/astaxie/beego/httplib"
 	"github.com/astaxie/beego/orm"
 	"strconv"
@@ -44,12 +45,10 @@ func Get(s, t, n string) (string, error) {
 	return req.String()
 }
 
-func Search(n string) ([]Forward, []Back) {
-	str0, _ := Get(changzhi, nanjing, n)
-func Search() (OW, error) {
-	str0, err := Get(changzhi, nanjing)
+func Search(n string) ([]Forward, []Back, error) {
+	str0, err := Get(changzhi, nanjing, n)
 	if err != nil {
-		return OW{nil, nil}, err
+		return nil, nil, err
 	}
 	var sth1 []interface{}
 	_ = json.Unmarshal([]byte(str0), &sth1)
@@ -87,8 +86,7 @@ func Search() (OW, error) {
 		back = append(back, *flight)
 	}
 
-	return forward, back
-	return OW{forward, back}, nil
+	return forward, back, nil
 }
 
 func timeFormat(r string) time.Time {
@@ -105,14 +103,19 @@ func Perform() {
 	now0 := time.Now().AddDate(0, 0, 14)
 	now1 := now0.AddDate(0, 0, 44)
 
-	f0, b0 := Search(getTimeStr(now0))
-	f1, b1 := Search(getTimeStr(now1))
+	f0, b0, err0 := Search(getTimeStr(now0))
+	f1, b1, err1 := Search(getTimeStr(now1))
 
 	f := append(f0, f1...)
 	b := append(b0, b1...)
 
-	_, _ = o.InsertMulti(len(f), f)
-	_, _ = o.InsertMulti(len(b), b)
+	if err0 != nil {
+		_, _ = o.InsertMulti(len(f), f)
+	}
+	if err1 != nil {
+		_, _ = o.InsertMulti(len(b), b)
+	}
+	fmt.Println(err0, err1)
 }
 
 func getTimeStr(t time.Time) string {
@@ -122,17 +125,6 @@ func getTimeStr(t time.Time) string {
 type OW struct {
 	Forward []Forward
 	Back    []Back
-	r, err := Search()
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		for e := range r.forward {
-			_, _ = o.Insert(&r.forward[e])
-		}
-		for e := range r.back {
-			_, _ = o.Insert(&r.back[e])
-		}
-	}
 }
 
 func GetAll() OW {
