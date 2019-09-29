@@ -32,17 +32,11 @@ func init() {
 	_ = orm.RunSyncdb("default", false, true)
 }
 
-type OW struct {
-	Forward []Forward
-	Back    []Back
-}
-
-func Get(s, t string) (string, error) {
-	now := time.Now().Format("2006-01-02")
+func Get(s, t, n string) (string, error) {
 	req := httplib.Get(url)
 	req.Param("flightType", "OW")
-	req.Param("departureDate", now)
-	req.Param("returnDate", now)
+	req.Param("departureDate", n)
+	req.Param("returnDate", n)
 	req.Param("sendCode", "CIH")
 	req.Param("arrCode", "NKG")
 	req.Param("periodType", "Line")
@@ -50,8 +44,8 @@ func Get(s, t string) (string, error) {
 	return req.String()
 }
 
-func Search() OW {
-	str0, _ := Get(changzhi, nanjing)
+func Search(n string) ([]Forward, []Back) {
+	str0, _ := Get(changzhi, nanjing, n)
 	var sth1 []interface{}
 	_ = json.Unmarshal([]byte(str0), &sth1)
 
@@ -73,7 +67,7 @@ func Search() OW {
 	if len(sth1) > 1 {
 		arr1 = sth1[1].(map[string]interface{})
 	} else {
-		str2, _ := Get(nanjing, changzhi)
+		str2, _ := Get(nanjing, changzhi, n)
 		var sth2 []interface{}
 		_ = json.Unmarshal([]byte(str2), &sth2)
 		arr1 = sth2[0].(map[string]interface{})
@@ -88,7 +82,7 @@ func Search() OW {
 		back = append(back, *flight)
 	}
 
-	return OW{forward, back}
+	return forward, back
 }
 
 func timeFormat(r string) time.Time {
@@ -102,9 +96,26 @@ func timeFormat(r string) time.Time {
 
 func Perform() {
 	o := orm.NewOrm()
-	r := Search()
-	_, _ = o.InsertMulti(len(r.Forward), r.Forward)
-	_, _ = o.InsertMulti(len(r.Back), r.Back)
+	now0 := time.Now().AddDate(0, 0, 14)
+	now1 := now0.AddDate(0, 0, 44)
+
+	f0, b0 := Search(getTimeStr(now0))
+	f1, b1 := Search(getTimeStr(now1))
+
+	f := append(f0, f1...)
+	b := append(b0, b1...)
+
+	_, _ = o.InsertMulti(len(f), f)
+	_, _ = o.InsertMulti(len(b), b)
+}
+
+func getTimeStr(t time.Time) string {
+	return t.Format("2006-01-02")
+}
+
+type OW struct {
+	Forward []Forward
+	Back    []Back
 }
 
 func GetAll() OW {
