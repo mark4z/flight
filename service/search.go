@@ -48,8 +48,11 @@ func Get(s, t string) (string, error) {
 	return req.String()
 }
 
-func Search() OW {
-	str0, _ := Get(changzhi, nanjing)
+func Search() (OW, error) {
+	str0, err := Get(changzhi, nanjing)
+	if err != nil {
+		return OW{nil, nil}, err
+	}
 	var sth1 []interface{}
 	_ = json.Unmarshal([]byte(str0), &sth1)
 
