@@ -84,7 +84,7 @@ func Search() OW {
 		back = append(back, *flight)
 	}
 
-	return OW{forward, back}
+	return OW{forward, back}, nil
 }
 
 func timeFormat(r string) time.Time {
@@ -98,11 +98,15 @@ func timeFormat(r string) time.Time {
 
 func Perform() {
 	o := orm.NewOrm()
-	r := Search()
-	for e := range r.forward {
-		_, _ = o.Insert(&r.forward[e])
-	}
-	for e := range r.back {
-		_, _ = o.Insert(&r.back[e])
+	r, err := Search()
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		for e := range r.forward {
+			_, _ = o.Insert(&r.forward[e])
+		}
+		for e := range r.back {
+			_, _ = o.Insert(&r.back[e])
+		}
 	}
 }
