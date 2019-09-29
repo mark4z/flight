@@ -15,11 +15,13 @@ const nanjing = "NKG"
 type Forward struct {
 	Id    int64     `orm:"auto"`
 	Date  time.Time `orm:"type(datetime)"`
+	Now   time.Time `orm:"type(datetime)"`
 	Price float64
 }
 type Back struct {
 	Id    int64     `orm:"auto"`
 	Date  time.Time `orm:"type(datetime)"`
+	Now   time.Time `orm:"type(datetime)"`
 	Price float64
 }
 
@@ -61,6 +63,7 @@ func Search() OW {
 		v := arr0[i].(float64)
 		flight := new(Forward)
 		flight.Date = timeFormat(i)
+		flight.Now = time.Now()
 		flight.Price = v
 		forward = append(forward, *flight)
 	}
@@ -80,6 +83,7 @@ func Search() OW {
 		v := arr0[i].(float64)
 		flight := new(Back)
 		flight.Date = timeFormat(i)
+		flight.Now = time.Now()
 		flight.Price = v
 		back = append(back, *flight)
 	}
