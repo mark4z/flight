@@ -38,8 +38,8 @@ func Get(s, t, n string) (string, error) {
 	req.Param("flightType", "OW")
 	req.Param("departureDate", n)
 	req.Param("returnDate", n)
-	req.Param("sendCode", "CIH")
-	req.Param("arrCode", "NKG")
+	req.Param("sendCode", s)
+	req.Param("arrCode", t)
 	req.Param("periodType", "Line")
 	req.Param("_", strconv.FormatInt(time.Now().UnixNano()/1e6, 10))
 
