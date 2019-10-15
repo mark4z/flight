@@ -105,7 +105,7 @@ func timeFormat(r string) time.Time {
 func Perform() {
 	o := orm.NewOrm()
 	now0 := time.Now().AddDate(0, 0, 14)
-	now1 := now0.AddDate(0, 0, 34)
+	now1 := now0.AddDate(0, 0, 30)
 
 	f0, b0, err0 := Search(getTimeStr(now0))
 	f1, b1, err1 := Search(getTimeStr(now1))
