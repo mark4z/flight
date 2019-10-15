@@ -52,8 +52,11 @@ func Search(n string) ([]Forward, []Back, error) {
 		return nil, nil, err
 	}
 	var sth1 []interface{}
-	_ = json.Unmarshal([]byte(str0), &sth1)
+	err = json.Unmarshal([]byte(str0), &sth1)
 
+	if err != nil {
+		return nil, nil, err
+	}
 	arr0 := sth1[0].(map[string]interface{})
 	var forward []Forward
 	var back []Back
