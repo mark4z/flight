@@ -8,7 +8,7 @@
       </database-info>
       <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact" />
       <secret-storage>master_key</secret-storage>
-      <user-name>flight</user-name>
+      <user-name>root</user-name>
       <introspection-schemas>*:@,flight</introspection-schemas>
     </data-source>
   </component>
