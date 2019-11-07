@@ -4,6 +4,6 @@ RUN go get github.com/astaxie/beego && go get github.com/beego/bee &&go get gith
 
 WORKDIR src/flight
 
-COPY .. .
+COPY .. /
 
 CMD bee run
