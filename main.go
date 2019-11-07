@@ -1,12 +1,10 @@
 package main
 
 import (
+	"flight/service"
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/toolbox"
-	_ "github.com/go-sql-driver/mysql"
-	_ "i/routers"
-	"i/service"
 	"time"
 )
 
