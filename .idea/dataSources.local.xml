@@ -9,14 +9,7 @@
       <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact" />
       <secret-storage>master_key</secret-storage>
       <user-name>flight</user-name>
-      <schema-mapping>
-        <introspection-scope>
-          <node kind="schema">
-            <name qname="@" />
-            <name qname="flight" />
-          </node>
-        </introspection-scope>
-      </schema-mapping>
+      <introspection-schemas>*:@</introspection-schemas>
     </data-source>
   </component>
 </project>
