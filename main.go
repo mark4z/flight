@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "flight/routers"
 	"flight/service"
 	"fmt"
 	"github.com/astaxie/beego"

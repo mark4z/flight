@@ -1,8 +1,8 @@
 package controllers
 
 import (
+	"flight/service"
 	"github.com/astaxie/beego"
-	"i/service"
 )
 
 type DataController struct {
