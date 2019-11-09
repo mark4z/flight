@@ -47,7 +47,7 @@ func dateFormat(t time.Time) string {
 }
 
 func search() string {
-	str := "Hi,Sir.\n Today:"
+	str := "Hi,Sir. Today:\n"
 	f, b, err := Search("2020-01-28")
 	if err != nil {
 		return ""
@@ -59,7 +59,7 @@ func search() string {
 			str += content
 		}
 	}
-	str += "长治-南京:"
+	str += "\n长治-南京:"
 	for i := range f {
 		if f[i].Date.After(time.Date(2020, 01, 29, 0, 0, 0, 0, time.Local)) && f[i].Date.Before(time.Date(2020, 02, 02, 0, 0, 0, 0, time.Local)) {
 			content := dateFormat(f[i].Date) + ":" + strconv.FormatFloat(float64(f[i].Price), 'f', 0, 64) + " "
