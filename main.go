@@ -16,7 +16,7 @@ func main() {
 		fmt.Println(err)
 	}
 
-	push := toolbox.NewTask("push", "0 0 14 * * *", func() error { service.Push(); fmt.Println("push:" + time.Now().String()); return nil })
+	push := toolbox.NewTask("push", "0 0 15 * * *", func() error { service.Push(); fmt.Println("push:" + time.Now().String()); return nil })
 	_ = push.Run()
 
 	toolbox.AddTask("myTask", task)
