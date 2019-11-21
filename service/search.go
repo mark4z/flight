@@ -83,7 +83,7 @@ func Search(n string) ([]Forward, []Back, error) {
 
 	}
 	for i := range arr1 {
-		v := arr0[i].(float64)
+		v := arr1[i].(float64)
 		flight := new(Back)
 		flight.Date = timeFormat(i)
 		flight.Now = time.Now()
