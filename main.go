@@ -16,11 +16,7 @@ func main() {
 		fmt.Println(err)
 	}
 
-	push := toolbox.NewTask("push", "0 0 10 * * *", func() error { service.Push(); fmt.Println("push:" + time.Now().String()); return nil })
-	_ = push.Run()
-
 	toolbox.AddTask("myTask", task)
-	toolbox.AddTask("push", push)
 	toolbox.StartTask()
 	beego.Run()
 }
