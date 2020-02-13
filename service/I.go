@@ -7,8 +7,6 @@ import (
 	"github.com/sideshow/apns2/certificate"
 	"github.com/sideshow/apns2/payload"
 	"log"
-	"strconv"
-	"time"
 )
 
 func pushMsg(msg, token string) {
@@ -38,34 +36,5 @@ func pushRedis(msg string) {
 }
 
 func Push() {
-	pushRedis(search())
-}
-
-func dateFormat(t time.Time) string {
-	var shortForm = "2006-01-02 15:04:05"
-	return t.Format(shortForm)[5:10]
-}
-
-func search() string {
-	str := "Hi,Sir. Today:\n"
-	f, b, err := Search("2020-01-28")
-	if err != nil {
-		return ""
-	}
-	str += "南京-长治:"
-	for j := range b {
-		if b[j].Date.After(time.Date(2020, 01, 22, 0, 0, 0, 0, time.Local)) && b[j].Date.Before(time.Date(2020, 01, 25, 0, 0, 0, 0, time.Local)) {
-			content := dateFormat(b[j].Date) + ":" + strconv.FormatFloat(float64(b[j].Price), 'f', 0, 64) + " "
-			str += content
-		}
-	}
-	str += "\n长治-南京:"
-	for i := range f {
-		if f[i].Date.After(time.Date(2020, 01, 29, 0, 0, 0, 0, time.Local)) && f[i].Date.Before(time.Date(2020, 02, 02, 0, 0, 0, 0, time.Local)) {
-			content := dateFormat(f[i].Date) + ":" + strconv.FormatFloat(float64(f[i].Price), 'f', 0, 64) + " "
-			str += content
-		}
-	}
-
-	return str
+	pushRedis("test")
 }
