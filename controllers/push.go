@@ -14,6 +14,7 @@ type PushController struct {
 
 func (c *PushController) Post() {
 	token := string(c.Ctx.Input.RequestBody)
+	fmt.Println(token)
 	redis, err := cache.NewCache("memory", `{"key":"token","conn":"hx.anymre.top:6379","dbNum":"0"}`)
 	if err != nil {
 		fmt.Print(err)
