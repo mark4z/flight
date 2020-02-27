@@ -14,14 +14,14 @@ type PushController struct {
 
 func (c *PushController) Post() {
 	token := string(c.Ctx.Input.RequestBody)
-	fmt.Println(token)
-	redis, err := cache.NewCache("memory", `{"key":"token","conn":"hx.anymre.top:6379","dbNum":"0"}`)
+	logs.Info("token "+ token)
+	redis, err := cache.NewCache("redis", `{"key":"token","conn":"hx.anymre.top:6379","dbNum":"0"}`)
 	if err != nil {
 		fmt.Print(err)
 		return
 	}
 	_ = redis.Put("devices", token, 240*time.Hour)
-	fmt.Println(redis.Get("devices"))
+	logs.Info(redis.Get("devices"))
 
 	c.Data["json"] = &token
 	c.ServeJSON()
