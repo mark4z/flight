@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/toolbox"
+	"github.com/astaxie/beego/logs"
 	"time"
 )
 
@@ -15,6 +16,7 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	logs.Info("0945")
 
 	toolbox.AddTask("myTask", task)
 	toolbox.StartTask()
